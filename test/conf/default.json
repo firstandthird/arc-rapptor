@@ -1,0 +1,10 @@
+{
+  "value": "22",
+  "log": {
+    "console": {
+      "options": {
+        "enabled": true
+      }
+    }
+  }
+}
