@@ -1,11 +1,8 @@
 const tap = require('tap');
-const rapptor = require('../');
 const nunjucks = require('nunjucks');
 
-tap.test('log', async t => {
-  // init rapptor:
-  const { config, log, cache, aug } = rapptor(`${__dirname}/conf`);
-  t.equal(config.value, '22');
+tap.test('rapptor', async t => {
+  const { config, log, cache, aug } = require('../');
   t.equal(typeof log, 'function');
   // init nunjucks:
   const env = nunjucks.configure(`${__dirname}/views`, { autoescape: true });
@@ -14,7 +11,7 @@ tap.test('log', async t => {
   // // declare a render function:
   const render = function(request) {
     const forceUpdate = (request.query.update === '1');
-    return cache.memo('home', async() => {
+    return cache.memo('home', () => {
       count++;
       log(['pagedata'], 'getting slugs');
       const html = nunjucks.render('test.njk', {

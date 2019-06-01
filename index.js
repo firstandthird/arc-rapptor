@@ -1,11 +1,9 @@
 const aug = require('aug');
 const confi = require('confi-lite');
+const config = confi('@architect/shared/conf');
 const logrAll = require('logr-all');
 const cache = require('@firstandthird/memory-cache');
 
-// load rapptor
-module.exports = (configPath = `${process.cwd()}/conf`) => {
-  const config = confi(configPath);
-  const log = logrAll(config.log || {});
-  return { log, cache, config, aug };
-};
+// load config:
+const log = logrAll(config.log || {});
+module.exports = { log, cache, config, aug };
