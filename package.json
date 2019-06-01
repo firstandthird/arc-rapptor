@@ -1,34 +1,35 @@
 {
   "name": "arc-rapptor",
-  "version": "0.0.1",
-  "description": "Utilities for serving views from lambda",
+  "version": "1.0.0",
+  "description": "arc-rapptor for serving pages on AWS Lambda",
+  "main": "index.js",
   "scripts": {
-    "test": "eslint && NODE_ENV=test tap --cov test/*.test.js"
+    "test": "tap test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/firstandthird/arc-rapptor.git"
   },
-  "keywords": [
-    "lambda",
-    "arc"
-    "rapptor"
-  ],
-  "author": "First+Third",
+  "author": "First & Third",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/firstandthird/arc-rapptor/issues"
   },
   "homepage": "https://github.com/firstandthird/arc-rapptor#readme",
-  "devDependencies": {
-    "eslint": "^4.15.0",
-    "eslint-config-firstandthird": "^4.3.0",
-    "eslint-plugin-import": "^2.8.0",
-    "tap": "^11.0.1"
-  },
   "eslintConfig": {
     "extends": "firstandthird"
   },
   "dependencies": {
+    "@firstandthird/memory-cache": "^1.0.0",
+    "aug": "^3.0.1",
+    "confi-lite": "0.0.1",
+    "logr-all": "^1.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-firstandthird": "^4.3.0",
+    "eslint-plugin-import": "^2.17.3",
+    "nunjucks": "^3.2.0",
+    "tap": "^14.2.0"
   }
 }
