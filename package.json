@@ -1,5 +1,5 @@
 {
-  "name": "@firstandthid/arc-rapptor",
+  "name": "@firstandthird/arc-rapptor",
   "version": "1.0.1",
   "description": "arc-rapptor for serving pages on AWS Lambda",
   "main": "index.js",
