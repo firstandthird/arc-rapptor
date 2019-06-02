@@ -10,13 +10,17 @@ const log = logrAll(config.log || {});
 
 log(['init', 'cold-start'], 'Function initialized');
 
-const cacheReply = function(req, fn) {
+const logRequest = function(req) {
   log(['request'], { message: `${req.method} ${req.path}`, path: req.path, query: req.query });
+}
+
+const cacheReply = function(req, fn) {
+  logRequest(req);
   return cache.memo(`response-${req.path}`, () => {
     log(['cache', 'miss'], { message: `cache miss for ${req.path}` });
     return fn();
-  });
+  }, config.replyCacheTTL, (req.query.update === '1'));
 }
 
 
-module.exports = { log, cache, config, aug, cacheReply };
+module.exports = { log, cache, config, aug, cacheReply, logRequest };
