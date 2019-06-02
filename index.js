@@ -6,6 +6,17 @@ const config = confi(confPath);
 const logrAll = require('logr-all');
 const cache = require('@firstandthird/memory-cache');
 
-// load config:
 const log = logrAll(config.log || {});
-module.exports = { log, cache, config, aug };
+
+log(['init', 'cold-start'], 'Function initialized');
+
+const cacheReply = function(req, fn) {
+  log(['request'], { message: `${req.method} ${req.path}`, path: req.path, query: req.query });
+  return cache.memo(`response-${req.path}`, () => {
+    log(['cache', 'miss'], { message: `cache miss for ${req.path}` });
+    return fn();
+  });
+}
+
+
+module.exports = { log, cache, config, aug, cacheReply };
