@@ -20,7 +20,7 @@ const cacheReply = function(req, fn) {
   return cache.memo(`response-${req.path}`, () => {
     log(['cache', 'miss'], { message: `cache miss for ${req.path}` });
     return fn();
-  }, config.replyCacheTTL, (req.query.update === '1'));
+  }, config.replyCacheTTL, (req.query && req.query.update === '1'));
 };
 
 
