@@ -3,8 +3,6 @@ const tap = require('tap');
 tap.test('rapptor', async t => {
   process.env.SHARED_PATH = __dirname;
   const { config, log, aug, logRequest } = require('../');
-  t.equal(typeof log, 'function', 'exports a log function');
-  log(['pagedata'], 'getting slugs');
   t.match(aug({ val1: 1 }, { val2: 3 }, { val2: 2, val3: 3 }), {
     val1: 1,
     val2: 2,
@@ -16,6 +14,9 @@ tap.test('rapptor', async t => {
   console.log = (param) => {
     val = param;
   };
+  log(['pagedata'], 'getting slugs');
+  t.equal(val, 'level=INFO msg="getting slugs" tag="pagedata"', 'exports a log function');
+  val = '';
   logRequest({
     method: 'get',
     path: '/',
