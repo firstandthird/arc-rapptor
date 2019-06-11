@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@firstandthird/memory-cache": "^1.0.0",
+    "arc-reply": "^0.1.0",
     "aug": "^3.0.1",
     "confi-lite": "0.0.1",
     "logr-all": "^1.6.0"

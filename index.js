@@ -6,6 +6,7 @@ const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@archi
 const config = confi(confPath);
 const logrAll = require('logr-all');
 const cache = require('@firstandthird/memory-cache');
+const reply = require('arc-reply');
 
 const log = logrAll(config.log || {});
 
@@ -24,4 +25,4 @@ const cacheReply = function(req, fn) {
 };
 
 
-module.exports = { log, cache, config, aug, cacheReply, logRequest };
+module.exports = { log, cache, config, aug, cacheReply, logRequest, reply };
