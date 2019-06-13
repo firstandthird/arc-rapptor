@@ -1,6 +1,6 @@
 const tap = require('tap');
 
-tap.test('arc-rapptor', async t => {
+tap.test('arc-rapptor', t => {
   process.env.SHARED_PATH = __dirname;
   const { config, log, aug, logRequest } = require('../');
   t.match(aug({ val1: 1 }, { val2: 3 }, { val2: 2, val3: 3 }), {
@@ -8,7 +8,8 @@ tap.test('arc-rapptor', async t => {
     val2: 2,
     val3: 3
   }, 'exports an aug (object deep-clone) function');
-  t.ok(config.json, 'loads and exports the config');
+  t.ok(config.json, 'loads the config from default.json');
+
   const oldLog = console.log;
   let val = '';
   console.log = (param) => {
