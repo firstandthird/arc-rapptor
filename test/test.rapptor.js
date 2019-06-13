@@ -2,7 +2,10 @@ const tap = require('tap');
 
 tap.test('arc-rapptor', t => {
   process.env.SHARED_PATH = __dirname;
-  const { config, log, aug, logRequest } = require('../');
+  const { config, log, aug, logRequest, reply } = require('../');
+  t.isA(reply.json, 'function', 'exports json reply method from arc-reply');
+  t.isA(reply.html, 'function', 'exports html reply method from arc-reply');
+  t.isA(reply.redirect, 'function', 'exports redirect reply method from arc-reply');
   t.match(aug({ val1: 1 }, { val2: 3 }, { val2: 2, val3: 3 }), {
     val1: 1,
     val2: 2,
