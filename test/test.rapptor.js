@@ -1,6 +1,6 @@
 const tap = require('tap');
 
-tap.test('rapptor', async t => {
+tap.test('arc-rapptor', async t => {
   process.env.SHARED_PATH = __dirname;
   const { config, log, aug, logRequest } = require('../');
   t.match(aug({ val1: 1 }, { val2: 3 }, { val2: 2, val3: 3 }), {
