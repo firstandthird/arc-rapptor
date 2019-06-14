@@ -20,7 +20,6 @@
     "extends": "firstandthird"
   },
   "dependencies": {
-    "@firstandthird/memory-cache": "^1.0.0",
     "arc-reply": "^0.1.0",
     "aug": "^3.0.1",
     "confi-lite": "0.0.1",
@@ -30,7 +29,6 @@
     "eslint": "^5.16.0",
     "eslint-config-firstandthird": "^4.3.0",
     "eslint-plugin-import": "^2.17.3",
-    "nunjucks": "^3.2.0",
     "tap": "^14.2.0"
   }
 }
