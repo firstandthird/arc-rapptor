@@ -22,7 +22,7 @@
   "dependencies": {
     "arc-reply": "^0.1.0",
     "aug": "^3.0.1",
-    "confi-lite": "0.0.1",
+    "confi-lite": "^0.2.0",
     "logr-all": "^2.0.0"
   },
   "devDependencies": {
