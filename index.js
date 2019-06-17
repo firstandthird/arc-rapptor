@@ -3,7 +3,13 @@ const confi = require('confi-lite');
 const path = require('path');
 
 const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
-const config = confi(confPath);
+const config = confi(confPath, process.env.NODE_ENV || 'dev', {
+  log: {
+    initLog: false,
+    unhandledRejection: true,
+    uncaughtException: true
+  }
+});
 const logrAll = require('logr-all');
 const reply = require('arc-reply');
 

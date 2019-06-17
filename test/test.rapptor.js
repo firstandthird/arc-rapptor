@@ -12,7 +12,7 @@ tap.test('arc-rapptor', t => {
     val3: 3
   }, 'exports an aug (object deep-clone) function');
   t.ok(config.json, 'loads the config from default.json');
-
+  t.ok(config.log, 'loads the base config');
   const oldLog = console.log;
   let val = '';
   console.log = (param) => {
