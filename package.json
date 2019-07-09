@@ -23,7 +23,7 @@
     "arc-reply": "^0.2.0",
     "aug": "^3.1.0",
     "confi-lite": "^0.2.0",
-    "logr-all": "^2.0.0"
+    "logr-all": "^2.0.1"
   },
   "devDependencies": {
     "eslint": "^6.0.1",
