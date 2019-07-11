@@ -1,6 +1,6 @@
 {
   "name": "@firstandthird/arc-rapptor",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "arc-rapptor for serving pages on AWS Lambda",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "arc-reply": "^0.2.0",
     "aug": "^3.1.0",
     "confi-lite": "^0.2.0",
-    "logr-all": "^2.0.1"
+    "logr-all": "^2.1.0"
   },
   "devDependencies": {
     "eslint": "^6.0.1",
