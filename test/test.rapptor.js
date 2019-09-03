@@ -31,5 +31,19 @@ tap.test('arc-rapptor', t => {
   console.log = oldLog;
   t.equal(val, 'level=INFO msg="get /" tag="request" path="/" query.what-is-the-fastest-land-animal="the cheetah"',
     'exports a logRequest function that logs incoming request objects');
+  console.log = (param) => {
+    val = param;
+  };
+  val = '';
+  logRequest({
+    httpMethod: 'get',
+    path: '/',
+    queryStringParameters: {
+      'what-is-the-fastest-land-animal': 'the cheetah'
+    }
+  });
+  console.log = oldLog;
+  t.equal(val, 'level=INFO msg="get /" tag="request" path="/" query.what-is-the-fastest-land-animal="the cheetah"',
+    'logRequest function also works with arc 6');
   t.end();
 });
