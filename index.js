@@ -18,7 +18,10 @@ const log = logrAll(config.log || {});
 log(['init', 'cold-start'], 'Function initialized');
 
 const logRequest = function(req) {
-  log(['request'], { message: `${req.method} ${req.path}`, path: req.path, query: req.query });
+  // // architect version 6 uses different keys names:
+  const method = req.method || req.httpMethod;
+  const query = req.queryStringParameters || req.query;
+  log(['request'], { message: `${method} ${req.path}`, path: req.path, query });
 };
 
 module.exports = { log, config, aug, logRequest, reply };
