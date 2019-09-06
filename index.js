@@ -24,4 +24,29 @@ const logRequest = function(req) {
   log(['request'], { message: `${method} ${req.path}`, path: req.path, query });
 };
 
-module.exports = { log, config, aug, logRequest, reply };
+const response = async function(fn) {
+  return async function(req) {
+    let res = null;
+    const start = new Date().getTime();
+    let statusCode = null;
+    try {
+      res = await fn(req);
+      statusCode = res.statusCode;
+    } catch (e) {
+      log(['error'], e);
+      statusCode = 500;
+      res = {
+        statusCode,
+        body: 'Server error'
+      };
+    }
+    const finish = new Date().getTime();
+    const duration = finish - start;
+    const method = req.httpMethod || req.method;
+    const query = req.queryStringParameters || req.query;
+    log(['request', statusCode], { statusCode, path, method, duration, query });
+    return res;
+  };
+};
+
+module.exports = { log, config, aug, logRequest, reply, response };
