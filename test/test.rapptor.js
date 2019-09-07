@@ -47,3 +47,41 @@ tap.test('arc-rapptor', t => {
     'logRequest function also works with arc 6');
   t.end();
 });
+
+tap.test('response method ', async t => {
+  process.env.SHARED_PATH = __dirname;
+  const { reply, response } = require('../');
+  const handler = await response((req) => {
+    return reply.html('yay');
+  });
+  const response1 = await handler({
+    method: 'get',
+    query: { blah: true }
+  });
+  const response2 = await handler({
+    method: 'post',
+    query: { blahblah: true }
+  });
+  t.match(response1, {
+    headers: { 'content-type': 'text/html; charset=utf8' },
+    body: 'yay',
+    statusCode: 200
+  });
+  t.match(response2, {
+    headers: { 'content-type': 'text/html; charset=utf8' },
+    body: 'yay',
+    statusCode: 200
+  });
+  const error = await response((req) => {
+    throw new Error('error');
+  });
+  const errResult = await error({
+    method: 'get',
+    query: { blah: true }
+  });
+  t.match(errResult, {
+    statusCode: 500,
+    body: 'Server error'
+  });
+  t.end();
+});
