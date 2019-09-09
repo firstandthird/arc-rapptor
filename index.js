@@ -2,18 +2,18 @@ const aug = require('aug');
 const confi = require('confi-lite');
 const path = require('path');
 
-let config = {};
+let config = {
+  log: {
+    initLog: false,
+    unhandledRejection: true,
+    uncaughtException: true
+  }
+};
 try {
   const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
-  config = confi(confPath, process.env.NODE_ENV || 'dev', {
-    log: {
-      initLog: false,
-      unhandledRejection: true,
-      uncaughtException: true
-    }
-  });
+  config = confi(confPath, process.env.NODE_ENV || 'dev', config);
 } catch (e) {
-  config = {};
+  /* don't crash */
 }
 const logrAll = require('logr-all');
 const reply = require('arc-reply');
