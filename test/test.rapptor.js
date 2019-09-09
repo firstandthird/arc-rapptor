@@ -19,7 +19,7 @@ tap.test('arc-rapptor', t => {
     val = param;
   };
   log(['pagedata'], 'getting slugs');
-  t.equal(val, 'level=INFO msg="getting slugs" tag="pagedata"', 'exports a log function');
+  t.isA(val, 'string', 'exports a log function');
   val = '';
   logRequest({
     method: 'get',
@@ -29,8 +29,8 @@ tap.test('arc-rapptor', t => {
     }
   });
   console.log = oldLog;
-  t.equal(val, 'level=INFO msg="get /" tag="request" path="/" query.what-is-the-fastest-land-animal="the cheetah"',
-    'exports a logRequest function that logs incoming request objects');
+  t.isA(val, 'string');
+  t.matches(val, 'what-is-the-fastest-land-animal', 'exports a logRequest function that logs incoming request objects');
   console.log = (param) => {
     val = param;
   };
@@ -43,22 +43,23 @@ tap.test('arc-rapptor', t => {
     }
   });
   console.log = oldLog;
-  t.equal(val, 'level=INFO msg="get /" tag="request" path="/" query.what-is-the-fastest-land-animal="the cheetah"',
-    'logRequest function also works with arc 6');
+  t.matches(val, 'what-is-the-fastest-land-animal', 'logRequest function also works with arc 6');
   t.end();
 });
 
 tap.test('response method ', async t => {
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
-  const handler = await response((req) => {
+  const handler = response((req) => {
     return reply.html('yay');
   });
   const response1 = await handler({
+    path: '/api',
     method: 'get',
     query: { blah: true }
   });
   const response2 = await handler({
+    path: '/api',
     method: 'post',
     query: { blahblah: true }
   });
@@ -72,7 +73,21 @@ tap.test('response method ', async t => {
     body: 'yay',
     statusCode: 200
   });
-  const error = await response((req) => {
+  const asyncHandler = response(async(req) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return reply.html('yay');
+  });
+  const asyncResponse = await asyncHandler({
+    path: '/api',
+    method: 'get',
+    query: { blah: true }
+  });
+  t.match(asyncResponse, {
+    headers: { 'content-type': 'text/html; charset=utf8' },
+    body: 'yay',
+    statusCode: 200
+  });
+  const error = response((req) => {
     throw new Error('error');
   });
   const errResult = await error({
