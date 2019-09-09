@@ -6,7 +6,16 @@ let config = {
   log: {
     initLog: false,
     unhandledRejection: true,
-    uncaughtException: true
+    uncaughtException: true,
+    reporters: {
+      json: {
+        reporter: require('logr-json'),
+        options: {
+          timestamp: false,
+          tagsObject: true
+        }
+      }
+    }
   }
 };
 try {
@@ -15,10 +24,10 @@ try {
 } catch (e) {
   /* don't crash */
 }
-const logrAll = require('logr-all');
+const Logr = require('logr');
 const reply = require('arc-reply');
 
-const log = logrAll(config.log || {});
+const log = Logr.createLogger(config.log);
 
 log(['init', 'cold-start'], 'Function initialized');
 
