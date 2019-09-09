@@ -49,7 +49,13 @@ const response = function(fn) {
     const duration = finish - start;
     const method = req.httpMethod || req.method;
     const query = req.queryStringParameters || req.query;
-    log(['request', statusCode], { statusCode, path, method, duration, query });
+    const logObject = {
+      statusCode, path: req.path, method, duration
+    };
+    if (query) {
+      logObject.query = query;
+    }
+    log(['request', statusCode], logObject);
     return res;
   };
 };

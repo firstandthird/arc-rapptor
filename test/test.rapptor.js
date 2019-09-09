@@ -55,10 +55,12 @@ tap.test('response method ', async t => {
     return reply.html('yay');
   });
   const response1 = await handler({
+    path: '/api',
     method: 'get',
     query: { blah: true }
   });
   const response2 = await handler({
+    path: '/api',
     method: 'post',
     query: { blahblah: true }
   });
@@ -77,6 +79,7 @@ tap.test('response method ', async t => {
     return reply.html('yay');
   });
   const asyncResponse = await asyncHandler({
+    path: '/api',
     method: 'get',
     query: { blah: true }
   });
