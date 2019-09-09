@@ -51,7 +51,7 @@ tap.test('arc-rapptor', t => {
 tap.test('response method ', async t => {
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
-  const handler = await response((req) => {
+  const handler = response((req) => {
     return reply.html('yay');
   });
   const response1 = await handler({
@@ -72,7 +72,20 @@ tap.test('response method ', async t => {
     body: 'yay',
     statusCode: 200
   });
-  const error = await response((req) => {
+  const asyncHandler = response(async(req) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return reply.html('yay');
+  });
+  const asyncResponse = await asyncHandler({
+    method: 'get',
+    query: { blah: true }
+  });
+  t.match(asyncResponse, {
+    headers: { 'content-type': 'text/html; charset=utf8' },
+    body: 'yay',
+    statusCode: 200
+  });
+  const error = response((req) => {
     throw new Error('error');
   });
   const errResult = await error({

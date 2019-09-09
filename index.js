@@ -29,7 +29,7 @@ const logRequest = function(req) {
   log(['request'], { message: `${method} ${req.path}`, path: req.path, query });
 };
 
-const response = async function(fn) {
+const response = function(fn) {
   return async function(req) {
     let res = null;
     const start = new Date().getTime();
