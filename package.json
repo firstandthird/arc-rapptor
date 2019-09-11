@@ -20,7 +20,7 @@
     "extends": "firstandthird"
   },
   "dependencies": {
-    "arc-reply": "^0.2.0",
+    "arc-reply": "^1.0.0",
     "aug": "^3.1.0",
     "confi-lite": "^0.2.0",
     "logr": "^2.16.0",
