@@ -26,6 +26,9 @@ tap.test('arc-rapptor', t => {
     path: '/',
     query: {
       'what-is-the-fastest-land-animal': 'the cheetah'
+    },
+    headers: {
+      'user-agent': 'orange'
     }
   });
   console.log = oldLog;
@@ -40,6 +43,9 @@ tap.test('arc-rapptor', t => {
     path: '/',
     queryStringParameters: {
       'what-is-the-fastest-land-animal': 'the cheetah'
+    },
+    headers: {
+      'user-agent': 'orange'
     }
   });
   console.log = oldLog;

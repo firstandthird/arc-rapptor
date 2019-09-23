@@ -35,7 +35,16 @@ const logRequest = function(req) {
   // // architect version 6 uses different keys names:
   const method = req.method || req.httpMethod;
   const query = req.queryStringParameters || req.query;
-  log(['request'], { message: `${method} ${req.path}`, path: req.path, query });
+  const data = {
+    message: `${method} ${req.path}`,
+    path: req.path,
+    userAgent: req.headers['user-agent'],
+    query
+  };
+  if (req.headers.referer) {
+    data.referer = req.headers.referer;
+  }
+  log(['request'], data);
 };
 
 const response = function(fn) {
