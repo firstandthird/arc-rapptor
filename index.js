@@ -31,22 +31,6 @@ const log = Logr.createLogger(config.log);
 
 log(['init', 'cold-start'], 'Function initialized');
 
-const logRequest = function(req) {
-  // // architect version 6 uses different keys names:
-  const method = req.method || req.httpMethod;
-  const query = req.queryStringParameters || req.query;
-  const data = {
-    message: `${method} ${req.path}`,
-    path: req.path,
-    userAgent: req.headers['user-agent'],
-    query
-  };
-  if (req.headers.referer) {
-    data.referer = req.headers.referer;
-  }
-  log(['request'], data);
-};
-
 const response = function(fn) {
   return async function(req) {
     let res = null;
@@ -68,8 +52,15 @@ const response = function(fn) {
     const method = req.httpMethod || req.method;
     const query = req.queryStringParameters || req.query;
     const logObject = {
-      statusCode, path: req.path, method, duration
+      statusCode,
+      path: req.path,
+      method,
+      duration,
+      userAgent: req.headers['user-agent'],
     };
+    if (req.headers.referer) {
+      logObject.referer = req.headers.referer;
+    }
     if (query) {
       logObject.query = query;
     }
@@ -78,4 +69,4 @@ const response = function(fn) {
   };
 };
 
-module.exports = { log, config, aug, logRequest, reply, response };
+module.exports = { log, config, aug, reply, response };
