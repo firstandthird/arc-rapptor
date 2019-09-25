@@ -56,14 +56,10 @@ const response = function(fn) {
       path: req.path,
       method,
       duration,
-      userAgent: req.headers['user-agent'],
+      userAgent: req.headers['user-agent'] || req.headers['User-Agent'] || '',
+      referer: req.headers.referer || req.headers.Referer || '',
+      query: query || ''
     };
-    if (req.headers.referer) {
-      logObject.referer = req.headers.referer;
-    }
-    if (query) {
-      logObject.query = query;
-    }
     log(['request', statusCode], logObject);
     return res;
   };
