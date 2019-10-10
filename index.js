@@ -7,6 +7,13 @@ let config = {
     initLog: false,
     unhandledRejection: true,
     uncaughtException: true,
+    logger(msg) {
+      if (msg.includes('"level":"ERROR"')) {
+        console.error(msg);
+      } else {
+        console.log(msg);
+      }
+    },
     reporters: {
       json: {
         reporter: require('logr-json'),

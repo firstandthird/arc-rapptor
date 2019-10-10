@@ -21,35 +21,6 @@ tap.test('arc-rapptor', t => {
   log(['pagedata'], 'getting slugs');
   t.isA(val, 'string', 'exports a log function');
   val = '';
-  logRequest({
-    method: 'get',
-    path: '/',
-    query: {
-      'what-is-the-fastest-land-animal': 'the cheetah'
-    },
-    headers: {
-      'user-agent': 'orange'
-    }
-  });
-  console.log = oldLog;
-  t.isA(val, 'string');
-  t.matches(val, 'what-is-the-fastest-land-animal', 'exports a logRequest function that logs incoming request objects');
-  console.log = (param) => {
-    val = param;
-  };
-  val = '';
-  logRequest({
-    httpMethod: 'get',
-    path: '/',
-    queryStringParameters: {
-      'what-is-the-fastest-land-animal': 'the cheetah'
-    },
-    headers: {
-      'user-agent': 'orange'
-    }
-  });
-  console.log = oldLog;
-  t.matches(val, 'what-is-the-fastest-land-animal', 'logRequest function also works with arc 6');
   t.end();
 });
 
@@ -62,11 +33,13 @@ tap.test('response method ', async t => {
   const response1 = await handler({
     path: '/api',
     method: 'get',
+    headers: {},
     query: { blah: true }
   });
   const response2 = await handler({
     path: '/api',
     method: 'post',
+    headers: {},
     query: { blahblah: true }
   });
   t.match(response1, {
@@ -86,6 +59,7 @@ tap.test('response method ', async t => {
   const asyncResponse = await asyncHandler({
     path: '/api',
     method: 'get',
+    headers: {},
     query: { blah: true }
   });
   t.match(asyncResponse, {
@@ -98,6 +72,7 @@ tap.test('response method ', async t => {
   });
   const errResult = await error({
     method: 'get',
+    headers: {},
     query: { blah: true }
   });
   t.match(errResult, {
