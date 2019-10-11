@@ -31,7 +31,8 @@ const log = Logr.createLogger(config.log);
 
 log(['init', 'cold-start'], 'Function initialized');
 
-const response = function(fn) {
+const response = function(fn, options = {}) {
+  const redirectTrailingSlash = (options.redirectTrailingSlash || options.redirectTrailingSlash === undefined) ? true : false;
   return async function(req) {
     let res = null;
     const start = new Date().getTime();
@@ -60,6 +61,14 @@ const response = function(fn) {
       referer: req.headers.referer || req.headers.Referer || '',
       query: query || ''
     };
+    // remove any trailing slash from path if it isn't '/':
+    if ([301, 302].includes(statusCode)) {
+      if (redirectTrailingSlash) {
+        if (res.headers.Location.length > 1 && res.headers.Location.includes('/')) {
+          res.headers.Location = res.headers.Location.replace(/\/$/, '');
+        }
+      }
+    }
     log(['request', statusCode], logObject);
     return res;
   };

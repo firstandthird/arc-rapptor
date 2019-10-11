@@ -106,3 +106,36 @@ tap.test('response method ', async t => {
   });
   t.end();
 });
+
+tap.test('response method redirectTrailingSlash', async t => {
+  process.env.SHARED_PATH = __dirname;
+  const { reply, response } = require('../');
+  const handler = response((req) => {
+    return reply.redirect('/yay/');
+  });
+  const response1 = await handler({
+    path: '/api/',
+    method: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.match(response1, {
+    headers: { Location: '/yay' },
+    statusCode: 301
+  }, 'redirectTrailingSlash is true by default');
+
+  const handler2 = response((req) => {
+    return reply.redirect('/yay/');
+  }, { redirectTrailingSlash: false });
+  const response2 = await handler2({
+    path: '/api/',
+    method: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.match(response2, {
+    headers: { Location: '/yay/' },
+    statusCode: 301
+  }, 'redirectTrailingSlash can be set to false');
+  t.end();
+});
