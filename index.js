@@ -38,8 +38,15 @@ const log = Logr.createLogger(config.log);
 
 log(['init', 'cold-start'], 'Function initialized');
 
-const response = function(fn) {
+const response = function(fn, options = {}) {
+  // default is true:
+  const redirectTrailingSlash = options.redirectTrailingSlash === undefined ? true : options.redirectTrailingSlash;
   return async function(req) {
+    const method = req.httpMethod || req.method;
+    // remove any trailing slash from path if it isn't '/':
+    if (redirectTrailingSlash && method.toLowerCase() === 'get' && req.path.endsWith('/')) {
+      return reply.redirect(req.path.replace(/\/$/, ''));
+    }
     let res = null;
     const start = new Date().getTime();
     let statusCode = null;
@@ -56,7 +63,6 @@ const response = function(fn) {
     }
     const finish = new Date().getTime();
     const duration = finish - start;
-    const method = req.httpMethod || req.method;
     const query = req.queryStringParameters || req.query;
     const logObject = {
       statusCode,

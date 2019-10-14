@@ -2,7 +2,7 @@ const tap = require('tap');
 
 tap.test('arc-rapptor', t => {
   process.env.SHARED_PATH = __dirname;
-  const { config, log, aug, logRequest, reply } = require('../');
+  const { config, log, aug, reply } = require('../');
   t.isA(reply.json, 'function', 'exports json reply method from arc-reply');
   t.isA(reply.html, 'function', 'exports html reply method from arc-reply');
   t.isA(reply.redirect, 'function', 'exports redirect reply method from arc-reply');
@@ -20,7 +20,6 @@ tap.test('arc-rapptor', t => {
   };
   log(['pagedata'], 'getting slugs');
   t.isA(val, 'string', 'exports a log function');
-  val = '';
   t.end();
 });
 
@@ -71,7 +70,8 @@ tap.test('response method ', async t => {
     throw new Error('error');
   });
   const errResult = await error({
-    method: 'get',
+    path: '/api',
+    httpMethod: 'get',
     headers: {},
     query: { blah: true }
   });
@@ -86,6 +86,7 @@ tap.test('default logger method uses console.log/console.error as needed ', asyn
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
   let logCalled = false;
+  const log = console.log;
   console.log = (input) => {
     t.match(input, '"level":"INFO"');
     logCalled = true;
@@ -104,15 +105,49 @@ tap.test('default logger method uses console.log/console.error as needed ', asyn
   const error = response((req) => {
     throw new Error('error');
   });
+  console.log = log;
   console.error = (input) => {
     t.match(input, '"level":"ERROR"');
     errCalled = true;
   }
   const errResult = await error({
+    path: '/api',
     method: 'get',
     headers: {},
     query: { blah: true }
   });
   t.ok(errCalled);
+  t.end();
+});
+
+tap.test('response method redirectTrailingSlash', async t => {
+  process.env.SHARED_PATH = __dirname;
+  const { reply, response } = require('../');
+  const handler = response((req) => {
+    return reply.html('yay');
+  });
+  const response1 = await handler({
+    path: '/api/',
+    httpMethod: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.match(response1, {
+    headers: { Location: '/api' },
+    statusCode: 301
+  }, 'redirectTrailingSlash is true by default');
+
+  const handler2 = response((req) => {
+    return reply.html('yay');
+  }, { redirectTrailingSlash: false });
+  const response2 = await handler2({
+    path: '/api/',
+    httpMethod: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.match(response2, {
+    statusCode: 200
+  }, 'redirectTrailingSlash can be set to false');
   t.end();
 });
