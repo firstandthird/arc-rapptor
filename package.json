@@ -1,6 +1,6 @@
 {
   "name": "@firstandthird/arc-rapptor",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "arc-rapptor for serving pages on AWS Lambda",
   "main": "index.js",
   "scripts": {
