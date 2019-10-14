@@ -82,7 +82,7 @@ tap.test('response method ', async t => {
   t.end();
 });
 
-tap.test('response method ', async t => {
+tap.test('default logger method uses console.log/console.error as needed ', async t => {
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
   let logCalled = false;
