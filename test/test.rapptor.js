@@ -2,7 +2,7 @@ const tap = require('tap');
 
 tap.test('arc-rapptor', t => {
   process.env.SHARED_PATH = __dirname;
-  const { config, log, aug, logRequest, reply } = require('../');
+  const { config, log, aug, reply } = require('../');
   t.isA(reply.json, 'function', 'exports json reply method from arc-reply');
   t.isA(reply.html, 'function', 'exports html reply method from arc-reply');
   t.isA(reply.redirect, 'function', 'exports redirect reply method from arc-reply');
@@ -20,36 +20,6 @@ tap.test('arc-rapptor', t => {
   };
   log(['pagedata'], 'getting slugs');
   t.isA(val, 'string', 'exports a log function');
-  val = '';
-  logRequest({
-    method: 'get',
-    path: '/',
-    query: {
-      'what-is-the-fastest-land-animal': 'the cheetah'
-    },
-    headers: {
-      'user-agent': 'orange'
-    }
-  });
-  console.log = oldLog;
-  t.isA(val, 'string');
-  t.matches(val, 'what-is-the-fastest-land-animal', 'exports a logRequest function that logs incoming request objects');
-  console.log = (param) => {
-    val = param;
-  };
-  val = '';
-  logRequest({
-    httpMethod: 'get',
-    path: '/',
-    queryStringParameters: {
-      'what-is-the-fastest-land-animal': 'the cheetah'
-    },
-    headers: {
-      'user-agent': 'orange'
-    }
-  });
-  console.log = oldLog;
-  t.matches(val, 'what-is-the-fastest-land-animal', 'logRequest function also works with arc 6');
   t.end();
 });
 
@@ -62,12 +32,14 @@ tap.test('response method ', async t => {
   const response1 = await handler({
     path: '/api',
     method: 'get',
-    query: { blah: true }
+    query: { blah: true },
+    headers: {}
   });
   const response2 = await handler({
     path: '/api',
-    method: 'post',
-    query: { blahblah: true }
+    httpMethod: 'post',
+    query: { blahblah: true },
+    headers: {}
   });
   t.match(response1, {
     headers: { 'content-type': 'text/html; charset=utf8' },
@@ -85,8 +57,9 @@ tap.test('response method ', async t => {
   });
   const asyncResponse = await asyncHandler({
     path: '/api',
-    method: 'get',
-    query: { blah: true }
+    httpMethod: 'get',
+    query: { blah: true },
+    headers: {}
   });
   t.match(asyncResponse, {
     headers: { 'content-type': 'text/html; charset=utf8' },
@@ -97,7 +70,9 @@ tap.test('response method ', async t => {
     throw new Error('error');
   });
   const errResult = await error({
-    method: 'get',
+    path: '/api',
+    httpMethod: 'get',
+    headers: {},
     query: { blah: true }
   });
   t.match(errResult, {
@@ -111,31 +86,30 @@ tap.test('response method redirectTrailingSlash', async t => {
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
   const handler = response((req) => {
-    return reply.redirect('/yay/');
+    return reply.html('yay');
   });
   const response1 = await handler({
     path: '/api/',
-    method: 'get',
+    httpMethod: 'get',
     headers: {},
     query: { blah: true }
   });
   t.match(response1, {
-    headers: { Location: '/yay' },
+    headers: { Location: '/api' },
     statusCode: 301
   }, 'redirectTrailingSlash is true by default');
 
   const handler2 = response((req) => {
-    return reply.redirect('/yay/');
+    return reply.html('yay');
   }, { redirectTrailingSlash: false });
   const response2 = await handler2({
     path: '/api/',
-    method: 'get',
+    httpMethod: 'get',
     headers: {},
     query: { blah: true }
   });
   t.match(response2, {
-    headers: { Location: '/yay/' },
-    statusCode: 301
+    statusCode: 200
   }, 'redirectTrailingSlash can be set to false');
   t.end();
 });
