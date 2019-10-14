@@ -32,14 +32,14 @@ tap.test('response method ', async t => {
   const response1 = await handler({
     path: '/api',
     method: 'get',
-    query: { blah: true },
-    headers: {}
+    headers: {},
+    query: { blah: true }
   });
   const response2 = await handler({
     path: '/api',
-    httpMethod: 'post',
-    query: { blahblah: true },
-    headers: {}
+    method: 'post',
+    headers: {},
+    query: { blahblah: true }
   });
   t.match(response1, {
     headers: { 'content-type': 'text/html; charset=utf8' },
@@ -57,9 +57,9 @@ tap.test('response method ', async t => {
   });
   const asyncResponse = await asyncHandler({
     path: '/api',
-    httpMethod: 'get',
-    query: { blah: true },
-    headers: {}
+    method: 'get',
+    headers: {},
+    query: { blah: true }
   });
   t.match(asyncResponse, {
     headers: { 'content-type': 'text/html; charset=utf8' },
@@ -79,6 +79,44 @@ tap.test('response method ', async t => {
     statusCode: 500,
     body: 'Server error'
   });
+  t.end();
+});
+
+tap.test('default logger method uses console.log/console.error as needed ', async t => {
+  process.env.SHARED_PATH = __dirname;
+  const { reply, response } = require('../');
+  let logCalled = false;
+  const log = console.log;
+  console.log = (input) => {
+    t.match(input, '"level":"INFO"');
+    logCalled = true;
+  };
+  const handler = response((req) => {
+    return reply.html('yay');
+  });
+  const response1 = await handler({
+    path: '/api',
+    method: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.ok(logCalled);
+  let errCalled = false;
+  const error = response((req) => {
+    throw new Error('error');
+  });
+  console.log = log;
+  console.error = (input) => {
+    t.match(input, '"level":"ERROR"');
+    errCalled = true;
+  }
+  const errResult = await error({
+    path: '/api',
+    method: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.ok(errCalled);
   t.end();
 });
 
