@@ -81,3 +81,38 @@ tap.test('response method ', async t => {
   });
   t.end();
 });
+
+tap.test('response method ', async t => {
+  process.env.SHARED_PATH = __dirname;
+  const { reply, response } = require('../');
+  let logCalled = false;
+  console.log = (input) => {
+    t.match(input, '"level":"INFO"');
+    logCalled = true;
+  };
+  const handler = response((req) => {
+    return reply.html('yay');
+  });
+  const response1 = await handler({
+    path: '/api',
+    method: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.ok(logCalled);
+  let errCalled = false;
+  const error = response((req) => {
+    throw new Error('error');
+  });
+  console.error = (input) => {
+    t.match(input, '"level":"ERROR"');
+    errCalled = true;
+  }
+  const errResult = await error({
+    method: 'get',
+    headers: {},
+    query: { blah: true }
+  });
+  t.ok(errCalled);
+  t.end();
+});
