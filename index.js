@@ -86,8 +86,8 @@ const response = function(fn, options = {}) {
       path: req.path,
       method,
       duration,
-      userAgent: req.headers['user-agent'] || req.headers['User-Agent'] || '',
-      referer: req.headers.referer || req.headers.Referer || '',
+      userAgent: req.headers['user-agent'] || '',
+      referer: req.headers.referer || '',
       query: req.queryStringParameters
     };
     log(['request', statusCode], logObject);
