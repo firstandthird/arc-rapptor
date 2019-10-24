@@ -106,6 +106,7 @@ tap.test('default logger method uses console.log/console.error as needed ', asyn
     throw new Error('error');
   });
   console.log = log;
+  const consoleError = console.error;
   console.error = (input) => {
     t.match(input, '"level":"ERROR"');
     errCalled = true;
@@ -117,6 +118,8 @@ tap.test('default logger method uses console.log/console.error as needed ', asyn
     query: { blah: true }
   });
   t.ok(errCalled);
+  console.log = log;
+  console.error = consoleError;
   t.end();
 });
 
@@ -168,7 +171,7 @@ tap.test('response method normalizes req and response', async t => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: '{ "isJson": true }'
+    body: new Buffer('{ "isJson": true }').toString('base64')
   });
   t.match(response1.headers, { 'content-type': 'application/json; charset=utf8' });
   t.end();

@@ -60,10 +60,10 @@ const response = function(fn, options = {}) {
       memo[key.toLowerCase()] = req.headersRaw[key];
       return memo;
     }, {});
-    if (req.headers['content-type'] === 'application/json') {
+    if (req.headers['content-type'] === 'application/json' && req.body) {
       try {
         req.bodyRaw = req.body;
-        req.body = JSON.parse(req.body);
+        req.body = JSON.parse(new Buffer(req.body, 'base64').toString());
       } catch (e) {
         // do nothing
       }
