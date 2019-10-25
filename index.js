@@ -50,6 +50,24 @@ const response = function(fn, options = {}) {
     let res = null;
     const start = new Date().getTime();
     let statusCode = null;
+    // make sure query and path params always exist:
+    req.queryStringParameters = req.queryStringParameters || {};
+    req.pathParameters = req.pathParameters || {};
+    // preserve the original headers
+    req.headersRaw = Object.assign({}, req.headers);
+    // and normalize the headers so you don't have to worry about case:
+    req.headers = Object.keys(req.headersRaw).reduce((memo, key) => {
+      memo[key.toLowerCase()] = req.headersRaw[key];
+      return memo;
+    }, {});
+    if (req.headers['content-type'] === 'application/json' && req.body) {
+      try {
+        req.bodyRaw = req.body;
+        req.body = JSON.parse(new Buffer(req.body, 'base64').toString());
+      } catch (e) {
+        // do nothing
+      }
+    }
     try {
       res = await fn(req);
       statusCode = res.statusCode;
@@ -63,15 +81,14 @@ const response = function(fn, options = {}) {
     }
     const finish = new Date().getTime();
     const duration = finish - start;
-    const query = req.queryStringParameters || req.query;
     const logObject = {
       statusCode,
       path: req.path,
       method,
       duration,
-      userAgent: req.headers['user-agent'] || req.headers['User-Agent'] || '',
-      referer: req.headers.referer || req.headers.Referer || '',
-      query: query || ''
+      userAgent: req.headers['user-agent'] || '',
+      referer: req.headers.referer || '',
+      query: req.queryStringParameters
     };
     log(['request', statusCode], logObject);
     return res;
