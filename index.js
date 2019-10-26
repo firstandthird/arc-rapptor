@@ -44,7 +44,7 @@ const response = function(fn, options = {}) {
   return async function(req) {
     const method = req.httpMethod || req.method;
     // remove any trailing slash from path if it isn't '/':
-    if (redirectTrailingSlash && method.toLowerCase() === 'get' && req.path.endsWith('/')) {
+    if (redirectTrailingSlash && method.toLowerCase() === 'get' && req.path.endsWith('/') && req.path !== '/') {
       return reply.redirect(req.path.replace(/\/$/, ''));
     }
     let res = null;
