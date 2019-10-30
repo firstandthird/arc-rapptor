@@ -22,12 +22,36 @@ const normalizeHeaders = (req, options) => {
   }
 };
 
-const middlewareBefore = (req, options) => {
-  // todo
+// middlewares must run sequentially and abort if any returns a response:
+/* eslint-disable no-await-in-loop */
+const middlewareBefore = async(req, options) => {
+  if (!options.middleware) {
+    return;
+  }
+  for (let i = 0; i < options.middleware.length; i++) {
+    const m = options.middleware[i];
+    if (m.before) {
+      const res = await m.before(req, options);
+      if (res !== undefined) {
+        return res;
+      }
+    }
+  }
 };
 
-const middlewareAfter = (req, options) => {
-  // todo
+const middlewareAfter = async(req, res, options) => {
+  if (!options.middleware) {
+    return;
+  }
+  for (let i = 0; i < options.middleware.length; i++) {
+    const m = options.middleware[i];
+    if (m.after) {
+      const afterResponse = await m.after(req, res, options);
+      if (afterResponse !== undefined) {
+        return afterResponse;
+      }
+    }
+  }
 };
 
 const runHandler = (requestHandler, req, options) => {
@@ -53,7 +77,18 @@ module.exports = function(requestHandler, options = {}) {
     }
     const start = new Date().getTime();
     normalizeHeaders(req, options);
-    const res = await runHandler(requestHandler, req, options);
+    // if any "before" middleware returns a response, just short-circuit and return it:
+    let res = await middlewareBefore(req, options);
+    if (res !== undefined) {
+      return res;
+    }
+    // the main request handler:
+    res = await runHandler(requestHandler, req, options);
+    // if any "after" middleware returns a response, return it instead:
+    const afterResponse = await middlewareAfter(req, res, options);
+    if (afterResponse !== undefined) {
+      return afterResponse;
+    }
     const finish = new Date().getTime();
     const duration = finish - start;
     const logObject = {
