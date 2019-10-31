@@ -24,39 +24,35 @@ const normalizeHeaders = (req, options) => {
 
 // middlewares must run sequentially and abort if any returns a response:
 /* eslint-disable no-await-in-loop */
-const middlewareBefore = async(req, options) => {
+const runMiddleware = async(req, res, key, options) => {
   if (!options.middleware) {
     return;
   }
   for (let i = 0; i < options.middleware.length; i++) {
     const m = options.middleware[i];
-    if (m.before) {
-      const res = await m.before(req, options);
-      if (res !== undefined) {
-        return res;
+    if (m[key]) {
+      const responseResult = (key === 'after') ? await m.after(req, res, options) : await m.before(req, options);
+      if (responseResult !== undefined) {
+        return responseResult;
       }
     }
   }
 };
 
-const middlewareAfter = async(req, res, options) => {
-  if (!options.middleware) {
-    return;
-  }
-  for (let i = 0; i < options.middleware.length; i++) {
-    const m = options.middleware[i];
-    if (m.after) {
-      const afterResponse = await m.after(req, res, options);
-      if (afterResponse !== undefined) {
-        return afterResponse;
-      }
-    }
-  }
-};
-
-const runHandler = (requestHandler, req, options) => {
+const runHandler = async(requestHandler, req, options) => {
   try {
-    return requestHandler(req);
+    // if any "before" middleware returns a response, just short-circuit and return it:
+    let res = await runMiddleware(req, {}, 'before', options);
+    if (res !== undefined) {
+      return res;
+    }
+    res = requestHandler(req);
+    // if any "after" middleware returns a response, return it instead:
+    const afterResponse = await runMiddleware(req, res, 'after', options);
+    if (afterResponse !== undefined) {
+      return afterResponse;
+    }
+    return res;
   } catch (e) {
     log(['error'], e);
     return {
@@ -77,18 +73,8 @@ module.exports = function(requestHandler, options = {}) {
     }
     const start = new Date().getTime();
     normalizeHeaders(req, options);
-    // if any "before" middleware returns a response, just short-circuit and return it:
-    let res = await middlewareBefore(req, options);
-    if (res !== undefined) {
-      return res;
-    }
     // the main request handler:
-    res = await runHandler(requestHandler, req, options);
-    // if any "after" middleware returns a response, return it instead:
-    const afterResponse = await middlewareAfter(req, res, options);
-    if (afterResponse !== undefined) {
-      return afterResponse;
-    }
+    const res = await runHandler(requestHandler, req, options);
     const finish = new Date().getTime();
     const duration = finish - start;
     const logObject = {
