@@ -68,7 +68,7 @@ module.exports = function(requestHandler, options = {}) {
   return async function(req) {
     const method = req.httpMethod || req.method;
     // handle any cors preflight requests:
-    if (!options.disableCors && method.toLowerCase() === 'options') {
+    if (options.cors && method.toLowerCase() === 'options') {
       return {
         statusCode: 200,
         headers: {
@@ -88,7 +88,7 @@ module.exports = function(requestHandler, options = {}) {
     // the main request handler:
     const res = await runHandler(requestHandler, req, options);
     // allow cors on individual routes as well:
-    if (!options.disableCors) {
+    if (options.cors) {
       res.headers['Access-Control-Allow-Origin'] = '*';
     }
     const finish = new Date().getTime();
