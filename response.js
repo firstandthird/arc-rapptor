@@ -67,6 +67,18 @@ module.exports = function(requestHandler, options = {}) {
   const redirectTrailingSlash = options.redirectTrailingSlash === undefined ? true : options.redirectTrailingSlash;
   return async function(req) {
     const method = req.httpMethod || req.method;
+    // handle any cors preflight requests:
+    if (!options.disableCors && method.toLowerCase() === 'options') {
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*'
+        },
+        body: 'CORS'
+      };
+    }
     // remove any trailing slash from path if it isn't '/':
     if (redirectTrailingSlash && method.toLowerCase() === 'get' && req.path.endsWith('/') && req.path !== '/') {
       return reply.redirect(req.path.replace(/\/$/, ''));
@@ -75,6 +87,10 @@ module.exports = function(requestHandler, options = {}) {
     normalizeHeaders(req, options);
     // the main request handler:
     const res = await runHandler(requestHandler, req, options);
+    // allow cors on individual routes as well:
+    if (!options.disableCors) {
+      res.headers['Access-Control-Allow-Origin'] = '*';
+    }
     const finish = new Date().getTime();
     const duration = finish - start;
     const logObject = {
