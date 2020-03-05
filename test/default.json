@@ -1,1 +1,6 @@
-{ "json": true }
+{
+  "response": {
+    "cors": true
+  },
+  "json": true
+}
