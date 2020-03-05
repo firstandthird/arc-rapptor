@@ -22,7 +22,7 @@ tap.test('default logger method uses console.log/console.error as needed ', asyn
   let errCalled = false;
   const error = response((req) => {
     throw new Error('error');
-  });
+  }, { cors: false });
   console.log = log;
   const consoleError = console.error;
   console.error = (input) => {

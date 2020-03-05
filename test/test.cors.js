@@ -27,7 +27,7 @@ tap.test('cors preflight ', async t => {
 tap.test('disable all cors requests ', async t => {
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
-  const handler = response((req) => reply.html('yay'));
+  const handler = response((req) => reply.html('yay'), { cors: false });
   const response1 = await handler({
     path: '/api',
     method: 'options',

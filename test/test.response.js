@@ -3,6 +3,25 @@ const tap = require('tap');
 tap.test('response method ', async t => {
   process.env.SHARED_PATH = __dirname;
   const { reply, response } = require('../');
+  const globalHandler = response((req) => {
+    return reply.html('yay');
+  });
+  // cors is true in the config:
+  const corsResult = await globalHandler({
+    path: '/',
+    method: 'options',
+    headers: {},
+    query: { blah: true }
+  });
+  t.match(corsResult, {
+    statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': '*'
+    },
+  });
+
   const handler = response((req) => {
     return reply.html('yay');
   });
@@ -45,7 +64,7 @@ tap.test('response method ', async t => {
   });
   const error = response((req) => {
     throw new Error('error');
-  });
+  }, { cors: false });
   const errResult = await error({
     path: '/api',
     httpMethod: 'get',
