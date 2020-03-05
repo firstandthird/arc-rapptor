@@ -65,7 +65,7 @@ const runHandler = async(requestHandler, req, options) => {
 
 module.exports = function(requestHandler, passedOptions = {}) {
   // merge global and local handler options:
-  const options = Object.assign(config.response || {}, passedOptions);
+  const options = Object.assign({}, config.response || {}, passedOptions);
   // default is true:
   const redirectTrailingSlash = options.redirectTrailingSlash === undefined ? true : options.redirectTrailingSlash;
   return async function(req) {
