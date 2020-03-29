@@ -92,6 +92,10 @@ module.exports = function(requestHandler, passedOptions = {}) {
     const res = await runHandler(requestHandler, req, options);
     // allow cors on individual routes as well:
     if (options.cors) {
+      // make sure headers are present
+      if (!res.headers) {
+        res.headers = {};
+      }
       res.headers['Access-Control-Allow-Origin'] = '*';
     }
     const finish = new Date().getTime();
