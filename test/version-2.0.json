@@ -1,0 +1,47 @@
+{
+    "version": "2.0",
+    "routeKey": "ANY /Echo",
+    "rawPath": "/Echo",
+    "rawQueryString": "getValueFor=newClient",
+    "cookies": [
+        "Cookie_2=value",
+        "Cookie_3=value",
+        "Cookie_4=value"
+    ],
+    "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, deflate, br",
+        "cache-control": "no-cache",
+        "clientinformation": "public,private",
+        "content-length": "0",
+        "host": "0000000000.execute-api.us-east-1.amazonaws.com",
+        "user-agent": "TestClient",
+        "x-amzn-trace-id": "Root=1-5e6ab967-cfe253ce6f8b90986a678c40",
+        "x-forwarded-for": "1.1.1.1",
+        "x-forwarded-port": "443",
+        "x-forwarded-proto": "https"
+    },
+    "queryStringParameters": {
+        "getValueFor": "newClient"
+    },
+    "requestContext": {
+        "accountId": "0000000000",
+        "apiId": "0000000000",
+        "domainName": "0000000000.execute-api.us-east-1.amazonaws.com",
+        "domainPrefix": "0000000000",
+        "http": {
+            "method": "GET",
+            "path": "/Echo",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "1.1.1.1",
+            "userAgent": "TestClient"
+        },
+        "requestId": "JTHoQgr2oAMEPMg=",
+        "routeId": "47matwk",
+        "routeKey": "ANY /Echo",
+        "stage": "$default",
+        "time": "12/Mar/2020:22:36:23 +0000",
+        "timeEpoch": 1584052583903
+    },
+    "isBase64Encoded": true
+}

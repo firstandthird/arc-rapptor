@@ -21,11 +21,11 @@ const normalizeHeaders = (req, options) => {
       // do nothing
     }
   }
-  if (req.http && req.http.method) {
-    req.method = req.http.method;
+  if (req.requestContext && req.requestContext.http && req.requestContext.http.method) {
+    req.method = req.requestContext.http.method;
   }
-  if (req.http && req.http.path) {
-    req.path = req.http.path;
+  if (req.requestContext && req.requestContext.http && req.requestContext.http.path) {
+    req.path = req.requestContext.http.path;
   }
   return req;
 };
