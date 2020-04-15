@@ -21,6 +21,13 @@ const normalizeHeaders = (req, options) => {
       // do nothing
     }
   }
+  if (req.http && req.http.method) {
+    req.method = req.http.method;
+  }
+  if (req.http && req.http.path) {
+    req.path = req.http.path;
+  }
+  return req;
 };
 
 // middlewares must run sequentially and abort if any returns a response:
@@ -69,6 +76,7 @@ module.exports = function(requestHandler, passedOptions = {}) {
   // default is true:
   const redirectTrailingSlash = options.redirectTrailingSlash === undefined ? true : options.redirectTrailingSlash;
   return async function(req) {
+    normalizeHeaders(req, options);
     const method = req.httpMethod || req.method;
     // handle any cors preflight requests:
     if (options.cors && method.toLowerCase() === 'options') {
@@ -87,7 +95,6 @@ module.exports = function(requestHandler, passedOptions = {}) {
       return reply.redirect(req.path.replace(/\/$/, ''));
     }
     const start = new Date().getTime();
-    normalizeHeaders(req, options);
     // the main request handler:
     const res = await runHandler(requestHandler, req, options);
     // allow cors on individual routes as well:

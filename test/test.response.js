@@ -77,3 +77,21 @@ tap.test('response method ', async t => {
   });
   t.end();
 });
+
+tap.test('response method', async t => {
+  const { reply, response } = require('../');
+  const handler = response((req) => {
+    t.equal(req.path, '/api');
+    t.equal(req.method, 'post');
+    return reply.html('yay');
+  });
+  const res = await handler({
+    http: {
+      path: '/api',
+      method: 'post'
+    },
+    headers: {},
+    query: { blahblah: true }
+  });
+  t.end();
+});
