@@ -2,7 +2,7 @@ const reply = require('arc-reply');
 const log = require('./log');
 const config = require('./config');
 
-const normalizeHeaders = (req, options) => {
+const normalize = (req, options) => {
   // make sure query and path params always exist:
   req.queryStringParameters = req.queryStringParameters || {};
   req.pathParameters = req.pathParameters || {};
@@ -21,6 +21,7 @@ const normalizeHeaders = (req, options) => {
       // do nothing
     }
   }
+  req.method = req.httpMethod || req.method;
   if (req.requestContext && req.requestContext.http && req.requestContext.http.method) {
     req.method = req.requestContext.http.method;
   }
@@ -76,10 +77,9 @@ module.exports = function(requestHandler, passedOptions = {}) {
   // default is true:
   const redirectTrailingSlash = options.redirectTrailingSlash === undefined ? true : options.redirectTrailingSlash;
   return async function(req) {
-    normalizeHeaders(req, options);
-    const method = req.httpMethod || req.method;
+    normalize(req, options);
     // handle any cors preflight requests:
-    if (options.cors && method.toLowerCase() === 'options') {
+    if (options.cors && req.method.toLowerCase() === 'options') {
       return {
         statusCode: 200,
         headers: {
@@ -91,7 +91,7 @@ module.exports = function(requestHandler, passedOptions = {}) {
       };
     }
     // remove any trailing slash from path if it isn't '/':
-    if (redirectTrailingSlash && method.toLowerCase() === 'get' && req.path.endsWith('/') && req.path !== '/') {
+    if (redirectTrailingSlash && req.method.toLowerCase() === 'get' && req.path.endsWith('/') && req.path !== '/') {
       return reply.redirect(req.path.replace(/\/$/, ''));
     }
     const start = new Date().getTime();
@@ -110,7 +110,7 @@ module.exports = function(requestHandler, passedOptions = {}) {
     const logObject = {
       statusCode: res.statusCode,
       path: req.path,
-      method,
+      method: req.method,
       duration,
       userAgent: req.headers['user-agent'] || '',
       referer: req.headers.referer || '',
