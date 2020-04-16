@@ -77,3 +77,16 @@ tap.test('response method ', async t => {
   });
   t.end();
 });
+
+tap.test('response method', async t => {
+  const { reply, response } = require('../');
+  const handler = response((req) => {
+    t.equal(req.path, '/Echo');
+    t.equal(req.method, 'GET');
+    return reply.html('yay');
+  });
+  const payload = JSON.parse(require('fs').readFileSync(`${__dirname}/version-2.0.json`).toString());
+  // test packet v2:
+  const res = await handler(payload)
+  t.end();
+});
