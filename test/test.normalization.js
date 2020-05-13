@@ -16,8 +16,20 @@ tap.test('response method normalizes req and response', async t => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: new Buffer('{ "isJson": true }').toString('base64')
+    body: new Buffer('{ "isJson": true }').toString('base64'),
+    isBase64Encoded: true
   });
   t.match(response1.headers, { 'content-type': 'application/json; charset=utf8' });
+  const response2 = await handler({
+    path: '/api',
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: '{ "isJson": true }',
+    isBase64Encoded: false
+  });
+  t.match(response2.headers, { 'content-type': 'application/json; charset=utf8' });
+
   t.end();
 });
