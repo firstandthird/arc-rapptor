@@ -16,7 +16,11 @@ const normalize = (req, options) => {
   if (req.headers['content-type'] === 'application/json' && req.body) {
     try {
       req.bodyRaw = req.body;
-      req.body = JSON.parse(new Buffer(req.body, 'base64').toString());
+      if (req.isBase64Encoded) {
+        req.body = JSON.parse(new Buffer(req.body, 'base64').toString());
+      } else {
+        req.body = JSON.parse(req.body);
+      }
     } catch (e) {
       // do nothing
     }
