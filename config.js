@@ -1,6 +1,5 @@
 const confi = require('confi-lite');
 const path = require('path');
-
 let config = {
   log: {
     initLog: false,
@@ -24,8 +23,13 @@ let config = {
     }
   }
 };
-// go ahead and crash if conf is not set up correctly
-const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
-config = confi(confPath, process.env.NODE_ENV || 'dev', config);
+try {
+  const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
+  config = confi(confPath, process.env.NODE_ENV || 'dev', config);
+} catch (e) {
+  if (!e.toString().startsWith('Error: Cannot find module')) {
+    throw e;
+  }
+}
 
 module.exports = config;
