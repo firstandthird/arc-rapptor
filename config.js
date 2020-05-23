@@ -24,12 +24,8 @@ let config = {
     }
   }
 };
-try {
-  const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
-  config = confi(confPath, process.env.NODE_ENV || 'dev', config);
-} catch (e) {
-  console.log(e);
-  /* don't crash */
-}
+// go ahead and crash if conf is not set up correctly
+const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
+config = confi(confPath, process.env.NODE_ENV || 'dev', config);
 
 module.exports = config;
