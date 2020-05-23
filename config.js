@@ -28,6 +28,7 @@ try {
   const confPath = process.env.SHARED_PATH || path.dirname(require.resolve('@architect/shared/conf/default.json'));
   config = confi(confPath, process.env.NODE_ENV || 'dev', config);
 } catch (e) {
+  console.log(e);
   /* don't crash */
 }
 
